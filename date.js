@@ -18,5 +18,3 @@ exports.getDay = function () {
   
     return today.toLocaleDateString("en-BE", dateFormatOptions);
   }
-
-  console.log(module.exports);
