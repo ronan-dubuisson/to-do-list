@@ -54,6 +54,7 @@ function getAllItems(db) {
 
             closeConnection();
 
+            //ik wil deze returned krijgen!
             return docs;
         });
     });
