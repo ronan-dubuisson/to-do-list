@@ -49,8 +49,9 @@ async function getAllItems(db) {
 
     const items = await Item.find({}).exec();
 
+    console.log(items);
 
-    return console.log("items: " + items);
+    return items;
 }
 
 function closeConnection() {
