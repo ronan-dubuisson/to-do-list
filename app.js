@@ -13,7 +13,7 @@ app.use(bodyParser.urlencoded({extended: true})); //enabeling parsing of body fr
 app.use(express.static("public")); //defining folder for static files to be served by express
 
 //const listItems = database.getAllItems(toDoListDB);
-const listItems= [];
+const listItems= database.getAllItems(toDoListDB);
 console.log(listItems);
 
 function openConnection() {

@@ -42,22 +42,16 @@ function addItem(name, db) {
 
 module.exports.getAllItems = getAllItems;
 
-function getAllItems(db) {
-    const conn = openConnection(db);
+async function getAllItems(db) {
+    openConnection(db);
 
-     conn.once('open', () => {
+    //finding all documents
 
-        //finding all documents
+    const items = await Item.find({}).exec();
 
-         Item.find({}, (err, docs) => {
-            if (err) throw err;
+    console.log(items);
 
-            closeConnection();
-
-            //ik wil deze returned krijgen!
-            return docs;
-        });
-    });
+    return items;
 }
 
 function closeConnection() {
