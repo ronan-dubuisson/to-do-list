@@ -14,7 +14,7 @@ app.use(express.static("public")); //defining folder for static files to be serv
 
 //const listItems = database.getAllItems(toDoListDB);
 const listItems= database.getAllItems(toDoListDB);
-console.log(listItems);
+console.log("ListItems: " + listItems);
 
 function openConnection() {
     mongoose.connect(toDoListDB);
