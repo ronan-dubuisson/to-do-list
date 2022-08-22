@@ -5,7 +5,8 @@ const ejs = require("ejs");
 const date = require(__dirname + "/date.js");
 const database = require(__dirname + "/db.js");
 const toDoListDB = "mongodb://localhost:27017/toDoListDB";
-const defaultTodoItems = ["Welcome To You To Do List", "Hit the + button to add a new item", " <-- check to mark the item as done", "hit the - button to delete an item"];
+//TODO: Breng default values naar local file
+const defaultTodoItems = ["Welcome To Your To Do List", "Hit the + button to add a new item", " <-- check to mark the item as done", "hit the - button to delete an item"];
 
 //setting up express and its uses
 const app = express();

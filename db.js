@@ -4,6 +4,7 @@ const mongooose = require("mongoose");
 let conn;
 
 //DB schemas
+//TODO: breng db schemas naar local files?
 const itemSchema = {
     name: {
         type: String,
