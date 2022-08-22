@@ -6,11 +6,12 @@
 
 <div class="box">
   <% for(i = 0; i < listItems.length; i++){ %>
-  <div class="item">
-    <input type="checkbox" />
-    <p><%= listItems[i] %></p>
-    <button class="remove">-</button>
-  </div>
+  <form action="/delete" method="post">
+    <div class="item">
+        <input name="checkbox" type="checkbox" value="<%=listItems[i]._id%>" onChange="this.form.submit()" />
+        <p name="toDoItem"><%= listItems[i].name %></p>
+    </div>
+  </form>
   <% } %>
 
   <form class="item" action="/" method="post">

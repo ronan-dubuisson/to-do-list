@@ -12,6 +12,14 @@ const itemSchema = {
     },
 };
 
+const listSchema = {
+    name: {
+        type: String,
+        required: true
+    },
+    items: [itemSchema]
+}
+
 //DB Models
 const Item = mongooose.model("item", itemSchema);
 
@@ -19,8 +27,17 @@ async function openConnection(db) {
    conn = await mongoose.connect(db);
 }
 
-module.exports.addItem = addItem;
+module.exports.getAllItems = getAllItems;
+async function getAllItems(db) {
+    await openConnection(db);
+    //finding all documents
+    const items = await Item.find({}).exec();
 
+    await closeConnection();
+    return items;
+}
+
+module.exports.addItem = addItem;
 async function addItem(itemNames, db) {
     //opening db connection
     await openConnection(db);
@@ -38,20 +55,11 @@ async function addItem(itemNames, db) {
     await closeConnection();
 }
 
-module.exports.getAllItems = getAllItems;
-
-async function getAllItems(db) {
-    const itemNames = [];
+module.exports.deleteItemById = deleteItemById;
+async function deleteItemById(id, db){
     await openConnection(db);
-    //finding all documents
-    const items = await Item.find({}).exec();
-
-    items.forEach((item)=>{
-        itemNames.push(item.name);
-    });
-
+    await Item.findByIdAndDelete(id);
     await closeConnection();
-    return itemNames;
 }
 
 async function closeConnection() {

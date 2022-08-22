@@ -3,7 +3,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
 const date = require(__dirname + "/date.js");
-const database = require(__dirname + "/db.js");
+const db = require(__dirname + "/db.js");
 const toDoListDB = "mongodb://localhost:27017/toDoListDB";
 //TODO: Breng default values naar local file
 const defaultTodoItems = ["Welcome To Your To Do List", "Hit the + button to add a new item", " <-- check to mark the item as done", "hit the - button to delete an item"];
@@ -16,29 +16,45 @@ app.use(express.static("public")); //defining folder for static files to be serv
 
 app.get("/", (req, res) => {
     //using the then as async functions return promises
-    database.getAllItems(toDoListDB).then((items) => {
+    db.getAllItems(toDoListDB).then((items) => {
 
         if(items.length===0){
             //if no items are in the db, add default items
-            database.addItem(defaultTodoItems,toDoListDB).then(()=>{
+            db.addItem(defaultTodoItems,toDoListDB).then(()=>{
                     res.redirect("/");
             });
         } else {
             //reading out the items and render it to the page
             res.render("list", {
                 listTitle: date.getDate(),
-                listItems: items,
+                listItems: items
             });
         }
     })
 });
 
 app.post("/", (req, res) => {
-    database.addItem([req.body.newItem], toDoListDB).then(() => {
+    db.addItem([req.body.newItem], toDoListDB).then(() => {
         //only do the redirect after the promise is fullfilled.
         res.redirect("/");
     });
 });
+
+app.get("/:customListName",(req, res)=>{
+    const customListName = req.params.customListName;
+    db.getAllItems(toDoListDB).then((items)=>{
+        res.render("list",{
+            listTitle: customListName,
+            listItems: items
+        })
+    })
+})
+
+app.post("/delete",(req, res)=>{
+    db.deleteItemById(req.body.checkbox,toDoListDB).then(()=>{
+        res.redirect("/");
+    });
+})
 
 app.get("/about", (req, res) => {
     res.render("about");
