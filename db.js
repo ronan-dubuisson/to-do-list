@@ -21,19 +21,18 @@ async function openConnection(db) {
 module.exports.addItem = addItem;
 
 async function addItem(itemNames, db) {
-    const items = [];
     //opening db connection
     await openConnection(db);
 
+    //Creating the items documents
+    const items = [];
     itemNames.forEach((itemName)=>{
         items.push({
             name:itemName
-        })
-    })
+        });
+    });
 
-    console.log(items);
-
-    //creating new document in the db
+    //add items to the db
     await Item.insertMany(items);
     await closeConnection();
 }
