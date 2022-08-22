@@ -43,17 +43,19 @@ function addItem(name, db) {
 module.exports.getAllItems = getAllItems;
 
 async function getAllItems(db) {
+    const itemNames = [];
     openConnection(db);
-
     //finding all documents
+    const results = await Item.find({}).exec();
+    results.forEach((result)=>{
+        itemNames.push(result.name);
+    });
 
-    const items = await Item.find({}).exec();
+    closeConnection();
 
-    console.log(items);
-
-    return items;
+    return itemNames;
 }
 
 function closeConnection() {
-    mongoose.connection.close();
+    mongoose.connection.close((locus) => locus);
 }
