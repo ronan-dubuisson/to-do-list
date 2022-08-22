@@ -1,61 +1,59 @@
 //module declaration
 const {default: mongoose} = require("mongoose");
 const mongooose = require("mongoose");
-let results;
+let conn;
+
 //DB schemas
 const itemSchema = {
     name: {
         type: String,
-        required: true,
+        required: true
     },
 };
 
 //DB Models
 const Item = mongooose.model("item", itemSchema);
 
-function openConnection(db) {
-    mongoose.connect(db);
-    return mongoose.connection;
+async function openConnection(db) {
+   conn = await mongoose.connect(db);
 }
 
 module.exports.addItem = addItem;
 
-function addItem(name, db) {
+async function addItem(itemNames, db) {
+    const items = [];
     //opening db connection
-    const conn = openConnection(db);
+    await openConnection(db);
 
-    //checking for connection to be open before sending in data
-    conn.once('open', () => {
+    itemNames.forEach((itemName)=>{
+        items.push({
+            name:itemName
+        })
+    })
 
-        //creating new document in the db
-        Item.create({
-                name: name
-            },
-            (err) => {
-                if (err) {
-                    console.log(err);
-                }
-                closeConnection();
-            });
-    });
+    console.log(items);
+
+    //creating new document in the db
+    await Item.insertMany(items);
+    await closeConnection();
 }
 
 module.exports.getAllItems = getAllItems;
 
 async function getAllItems(db) {
     const itemNames = [];
-    openConnection(db);
+    await openConnection(db);
     //finding all documents
-    const results = await Item.find({}).exec();
-    results.forEach((result)=>{
-        itemNames.push(result.name);
+    const items = await Item.find({}).exec();
+
+    items.forEach((item)=>{
+        itemNames.push(item.name);
     });
 
-    closeConnection();
-
+    await closeConnection();
     return itemNames;
 }
 
-function closeConnection() {
-    mongoose.connection.close((locus) => locus);
+async function closeConnection() {
+    conn.disconnect();
 }
