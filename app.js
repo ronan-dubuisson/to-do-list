@@ -65,13 +65,18 @@ app.post('/delete', (req, res) => {
 });
 
 app.get('/:customListName', (req, res) => {
-  const { customListName } = req.params;
-  db.findList(customListName, true).then((list) => {
-    res.render('list', {
-      listTitle: customListName,
-      listItems: list.items,
+  const customListName = req.params.customListName;
+
+  if (customListName === 'favicon.ico') {
+    res.status(204).send();
+  } else {
+    db.findList(customListName, true).then((list) => {
+      res.render('list', {
+        listTitle: customListName,
+        listItems: list.items,
+      });
     });
-  });
+  }
 });
 
 app.get('/about', (req, res) => {
