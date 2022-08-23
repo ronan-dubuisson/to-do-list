@@ -1,5 +1,5 @@
 // module declaration
-const mongoose = require('mongoose');
+const { default: mongoose } = require('mongoose');
 
 let conn;
 
@@ -61,6 +61,25 @@ async function addItem(itemNames) {
   await closeConnection();
 }
 
+async function findList(listName, upsert, item) {
+  await openConnection(this.connectionString);
+  const conditions = { name: listName };
+  const update = { name: listName };
+  const options = { upsert, new: true };
+  const list = await List.findOneAndUpdate(conditions, update, options).exec();
+
+  if (item) {
+    list.items.push({
+      name: item,
+    });
+    await list.save();
+  }
+
+  await closeConnection();
+
+  return list;
+}
+
 async function deleteItemById(id) {
   await openConnection(this.connectionString);
   await Item.findByIdAndDelete(id);
@@ -71,3 +90,4 @@ module.exports = Db;
 Db.prototype.addItem = addItem;
 Db.prototype.getAllItems = getAllItems;
 Db.prototype.deleteItemById = deleteItemById;
+Db.prototype.findList = findList;
