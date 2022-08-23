@@ -3,9 +3,10 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
 const date = require(__dirname + "/date.js");
-const db = require(__dirname + "/db.js");
-const toDoListDB = "mongodb://localhost:27017/toDoListDB";
+const database = require(__dirname + "/db.js");
 //TODO: Breng default values naar local file
+const dbConnectionString = "mongodb://localhost:27017/toDoListDB";
+const db = new database(dbConnectionString);
 const defaultTodoItems = ["Welcome To Your To Do List", "Hit the + button to add a new item", " <-- check to mark the item as done", "hit the - button to delete an item"];
 
 //setting up express and its uses
@@ -16,11 +17,11 @@ app.use(express.static("public")); //defining folder for static files to be serv
 
 app.get("/", (req, res) => {
     //using the then as async functions return promises
-    db.getAllItems(toDoListDB).then((items) => {
+    db.getAllItems().then((items) => {
 
         if(items.length===0){
             //if no items are in the db, add default items
-            db.addItem(defaultTodoItems,toDoListDB).then(()=>{
+            db.addItem(defaultTodoItems).then(()=>{
                     res.redirect("/");
             });
         } else {
@@ -34,7 +35,7 @@ app.get("/", (req, res) => {
 });
 
 app.post("/", (req, res) => {
-    db.addItem([req.body.newItem], toDoListDB).then(() => {
+    db.addItem([req.body.newItem]).then(() => {
         //only do the redirect after the promise is fullfilled.
         res.redirect("/");
     });
@@ -42,7 +43,7 @@ app.post("/", (req, res) => {
 
 app.get("/:customListName",(req, res)=>{
     const customListName = req.params.customListName;
-    db.getAllItems(toDoListDB).then((items)=>{
+    db.getAllItems().then((items)=>{
         res.render("list",{
             listTitle: customListName,
             listItems: items
@@ -51,7 +52,7 @@ app.get("/:customListName",(req, res)=>{
 })
 
 app.post("/delete",(req, res)=>{
-    db.deleteItemById(req.body.checkbox,toDoListDB).then(()=>{
+    db.deleteItemById(req.body.checkbox).then(()=>{
         res.redirect("/");
     });
 })

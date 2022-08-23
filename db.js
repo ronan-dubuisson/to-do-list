@@ -1,35 +1,41 @@
 //module declaration
-const {default: mongoose} = require("mongoose");
-const mongooose = require("mongoose");
+const mongoose = require("mongoose");
+
 let conn;
 
 //DB schemas
 //TODO: breng db schemas naar local files?
-const itemSchema = {
+const itemSchema = new mongoose.Schema ({
     name: {
         type: String,
         required: true
     },
-};
+});
 
-const listSchema = {
+const listSchema = new mongoose.Schema ({
     name: {
         type: String,
         required: true
     },
     items: [itemSchema]
-}
+});
 
 //DB Models
-const Item = mongooose.model("item", itemSchema);
+const Item = mongoose.model("item", itemSchema);
+const List = mongoose.model("list", listSchema);
 
-async function openConnection(db) {
-   conn = await mongoose.connect(db);
+module.exports = Db;
+function Db(connectionString){
+    this.connectionString = connectionString;
 }
 
-module.exports.getAllItems = getAllItems;
-async function getAllItems(db) {
-    await openConnection(db);
+async function openConnection(connectionString) {
+   conn = await mongoose.connect(connectionString);
+}
+
+Db.prototype.getAllItems = getAllItems;
+async function getAllItems() {
+    await openConnection(this.connectionString);
     //finding all documents
     const items = await Item.find({}).exec();
 
@@ -37,10 +43,10 @@ async function getAllItems(db) {
     return items;
 }
 
-module.exports.addItem = addItem;
-async function addItem(itemNames, db) {
+Db.prototype.addItem = addItem;
+async function addItem(itemNames) {
     //opening db connection
-    await openConnection(db);
+    await openConnection(this.connectionString);
 
     //Creating the items documents
     const items = [];
@@ -55,9 +61,9 @@ async function addItem(itemNames, db) {
     await closeConnection();
 }
 
-module.exports.deleteItemById = deleteItemById;
-async function deleteItemById(id, db){
-    await openConnection(db);
+Db.prototype.deleteItemById = deleteItemById;
+async function deleteItemById(id){
+    await openConnection(this.connectionString);
     await Item.findByIdAndDelete(id);
     await closeConnection();
 }
