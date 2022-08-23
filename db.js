@@ -48,7 +48,6 @@ async function getAllItems() {
 async function addItem(itemNames) {
   // opening db connection
   await openConnection(this.connectionString);
-
   // Creating the items documents
   const items = [];
   itemNames.forEach((itemName) => {
